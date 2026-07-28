@@ -187,6 +187,12 @@ section.alt{background:var(--surface-alt);}
 .lurah-row .idx{font-family:'Fraunces',serif;font-size:26px;color:var(--navy-100);}
 .lurah-row .name{font-size:16px;color:var(--navy-900);font-family:'Fraunces',serif;}
 .lurah-row .role{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.lurah-row .period{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--navy-500);
+  margin-top:4px;
+}
 
 /* ---------- BARS (penduduk) ---------- */
 .penduduk-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;}
@@ -471,6 +477,9 @@ body.theme-festive .lurah-row:nth-child(4n+2) .idx{color:var(--f-coral);}
 body.theme-festive .lurah-row:nth-child(4n+3) .idx{color:var(--f-gold);}
 body.theme-festive .lurah-row:nth-child(4n+4) .idx{color:var(--f-leaf);}
 body.theme-festive .lurah-row .name{color:var(--navy-900);}
+body.theme-festive .lurah-row .period{
+  color:var(--f-teal-dark);
+}
 
 /* ---------- FESTIVE: kependudukan, komoditas, fasilitas ---------- */
 body.theme-festive .seg.male{background:var(--f-teal);}
