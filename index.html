@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelurahan Kelapa Dua, Kecamatan Lembeh Selatan, Kota Bitung</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  header.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+  }
+  #peta-map {
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(18,58,102,.18);
+  }
+  .leaflet-popup-tip {
+    box-shadow: 0 6px 20px rgba(18,58,102,.1);
+  }
+  .leaflet-bar a {
+    color: #123A66 !important;
+  }
+  .leaflet-popup-content {
+    margin: 12px 14px;
+    font-family: inherit;
+  }
+  .popup-title {
+    font-weight: 700;
+    color: #123A66;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  .popup-desc {
+    font-size: 12.5px;
+    color: #666;
+  }
+
+  .lux-pin {
+    position: relative;
+    width: 26px;
+    height: 34px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.35));
+    transition: transform .18s ease;
+  }
+  .lux-pin:hover { transform: translateY(-3px) scale(1.06); }
+  .lux-pin svg { display:block; width:100%; height:100%; }
+  .lux-pin .pin-icon {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .lux-pin .pin-icon svg { width:12px; height:12px; filter:none; }
+
+  .legend-panel {
+    background:#fff;
+    border:1px solid #e6e6e6;
+    border-radius:12px;
+    padding:16px;
+    box-shadow: 0 4px 16px rgba(18,58,102,.06);
+  }
+  .legend-title {
+    font-weight:700;
+    color:#123A66;
+    margin-bottom:10px;
+    font-size:14px;
+  }
+  .legend-scroll-area {
+    max-height: 340px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .legend-scroll-area::-webkit-scrollbar {
+    width: 6px;
+  }
+  .legend-scroll-area::-webkit-scrollbar-thumb {
+    background: #d8dde3;
+    border-radius: 10px;
+  }
+  .legend-item { border-bottom:1px solid #f0f0f0; }
+  .legend-item:last-child { border-bottom:none; }
+  .legend-item summary {
+    list-style:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 2px;
+    font-size:13.5px;
+    color:#333;
+    user-select:none;
+  }
+  .legend-item summary::-webkit-details-marker { display:none; }
+  .legend-swatch-label {
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .legend-swatch {
+    width:14px; height:14px;
+    border-radius:50%;
+    border:2px solid #fff;
+    box-shadow:0 0 0 1px #ddd;
+    flex-shrink:0;
+  }
+  .legend-count {
+    font-size:11px;
+    color:#999;
+    background:#f4f4f4;
+    border-radius:20px;
+    padding:1px 8px;
+    margin-right:4px;
+  }
+  .legend-chevron {
+    width:9px; height:9px;
+    border-right:2px solid #999;
+    border-bottom:2px solid #999;
+    transform: rotate(-45deg);
+    transition: transform .18s ease;
+    flex-shrink:0;
+  }
+  .legend-item[open] .legend-chevron { transform: rotate(45deg); }
+  .legend-list {
+    list-style:none;
+    padding:0 0 10px 23px;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .legend-list li {
+    font-size:12.5px;
+    color:#555;
+    line-height:1.4;
+    position:relative;
+    padding-left:12px;
+  }
+  .legend-list li::before {
+    content:"";
+    position:absolute;
+    left:0; top:6px;
+    width:5px; height:5px;
+    border-radius:50%;
+    background:#c9c9c9;
+  }
+  .legend-list li .lbl-name { color:#222; font-weight:600; }
+</style>
+</head>
+<body class="theme-festive">
+
+<div class="festive-topbar"><span></span><span></span><span></span><span></span></div>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M24 44 C24 30 20 22 20 22" stroke="#123A66" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 44 C24 30 28 22 28 22" stroke="#C9922E" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 22c-4-2-8 0-10-4 4 0 7-2 8-6 2 4 1 8 2 10z" fill="#123A66"/>
+        <path d="M20 22c-2-4 0-8-3-11 4 1 6 4 6 8-1 1-2 2-3 3z" fill="#123A66"/>
+        <path d="M20 22c3-3 2-8 6-10-1 4 0 8-3 11-1-0.5-2-1-3-1z" fill="#123A66"/>
+        <path d="M28 22c4-2 8 0 10-4-4 0-7-2-8-6-2 4-1 8-2 10z" fill="#C9922E"/>
+        <path d="M28 22c2-4 0-8 3-11-4 1-6 4-6 8 1 1 2 2 3 3z" fill="#C9922E"/>
+        <path d="M28 22c-3-3-2-8-6-10 1 4 0 8 3 11 1-0.5 2-1 3-1z" fill="#C9922E"/>
+      </svg>
+      <span class="brand-text"><span class="kel">Kelapa Dua</span><span class="loc">Lembeh Selatan · Bitung</span></span>
+    </a>
+    <button class="nav-toggle" id="navToggle">Menu</button>
+    <nav class="links" id="navLinks">
+      <a href="index.html" class="active">Beranda</a>
+      <a href="profil.html">Profil</a>
+      <a href="pemerintahan.html">Pemerintahan</a>
+      <a href="penduduk.html">Penduduk &amp; Ekonomi</a>
+      <a href="galeri.html">Galeri</a>
+      <a href="kontak.html">Kontak</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="home-hero">
+    <svg class="hero-palms" viewBox="0 0 400 400" fill="none">
+      <path d="M180 380 C180 260 150 180 150 180" stroke="#123A66" stroke-width="3" stroke-linecap="round"/>
+      <path d="M150 180c-30-14-60 2-76-28 30 0 52-16 60-46 16 30 8 60 16 74z" fill="#123A66"/>
+      <path d="M150 180c-14-30 2-60-28-76 30 2 46 26 46 56-6 6-12 14-18 20z" fill="#123A66"/>
+      <path d="M150 180c22-20 14-58 44-72-8 30 0 60-24 78-6-2-14-4-20-6z" fill="#123A66"/>
+      <path d="M240 380C240 260 270 180 270 180" stroke="#C9922E" stroke-width="3" stroke-linecap="round"/>
+      <path d="M270 180c30-14 60 2 76-28-30 0-52-16-60-46-16 30-8 60-16 74z" fill="#C9922E"/>
+      <path d="M270 180c14-30-2-60 28-76-30 2-46 26-46 56 6 6 12 14 18 20z" fill="#C9922E"/>
+      <path d="M270 180c-22-20-14-58-44-72 8 30 0 60 24 78 6-2 14-4 20-6z" fill="#C9922E"/>
+    </svg>
+    <div class="wrap">
+      <div class="eyebrow">Profil Kelurahan &middot; Kota Bitung, Sulawesi Utara</div>
+      <h1>Kelurahan<br><span>Kelapa Dua</span></h1>
+      <p class="lede">Kelurahan pesisir di Kecamatan Lembeh Selatan dinamai dari dua pohon kelapa yang berdiri di sebuah tanjung sejak awal pemukiman tahun 1937. Kini menjadi rumah bagi 632 jiwa yang hidup dari kebun pala, kelapa, dan cengkeh.</p>
+    </div>
+  </section>
+
+  <div class="wave-divider wave-hero" aria-hidden="true">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,32 C200,60 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path></svg>
+  </div>
+
+  <section id="peta" class="alt">
+    <div class="wrap">
+      <div class="section-head"><span class="section-num">—</span><h2>Letak Wilayah</h2></div>
+      <div style="display:flex; gap:20px; align-items:stretch; flex-wrap:wrap;">
+        <div id="peta-map" style="flex:1 1 500px; min-width:280px; height:420px;border-radius:12px;overflow:hidden;"></div>
+        <div style="flex:0 0 250px; min-width:220px;">
+          <div class="legend-panel">
+            <div class="legend-title">Keterangan</div>
+            <div class="legend-scroll-area">
+              <div id="legendList"></div>
+              <div class="legend-item" style="border-top:1px solid #f0f0f0; padding-top:2px; margin-top:4px;">
+                <div style="display:flex; align-items:center; gap:9px; padding:10px 2px; font-size:13.5px; color:#333;">
+                  <span style="width:14px; height:2px; background:#E64A3B; flex-shrink:0;"></span>
+                  <span>Batas Wilayah</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="section-num">—</span>
+        <h2>Jelajahi Profil Kelurahan</h2>
+      </div>
+      <div class="nav-cards">
+        <a class="nav-card" href="profil.html">
+          <div class="nc-num">01</div>
+          <h3>Profil</h3>
+          <p>Sejarah, asal usul nama, wilayah, visi &amp; misi.</p>
+        </a>
+        <a class="nav-card" href="pemerintahan.html">
+          <div class="nc-num">02</div>
+          <h3>Pemerintahan</h3>
+          <p>Daftar lurah dan struktur organisasi.</p>
+        </a>
+        <a class="nav-card" href="penduduk.html">
+          <div class="nc-num">03</div>
+          <h3>Penduduk &amp; Ekonomi</h3>
+          <p>Kependudukan, mata pencaharian, dan fasilitas.</p>
+        </a>
+        <a class="nav-card" href="galeri.html">
+          <div class="nc-num">04</div>
+          <h3>Galeri</h3>
+          <p>Foto kegiatan dan dokumentasi kelurahan.</p>
+        </a>
+        <a class="nav-card" href="kontak.html">
+          <div class="nc-num">05</div>
+          <h3>Kontak</h3>
+          <p>Alamat dan jam pelayanan.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M24 44 C24 30 20 22 20 22" stroke="#123A66" stroke-width="2" stroke-linecap="round"/>
+        <path d="M24 44 C24 30 28 22 28 22" stroke="#C9922E" stroke-width="2" stroke-linecap="round"/>
+        <path d="M20 22c-4-2-8 0-10-4 4 0 7-2 8-6 2 4 1 8 2 10z" fill="#123A66"/>
+        <path d="M28 22c4-2 8 0 10-4-4 0-7-2-8-6-2 4-1 8-2 10z" fill="#C9922E"/>
+      </svg>
+      <div><div class="t1">Kelurahan Kelapa Dua</div><div class="t2">Kecamatan Lembeh Selatan, Kota Bitung, Sulawesi Utara</div></div>
+    </div>
+  </div>
+</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var petaMap = L.map('peta-map').setView([1.43852, 125.22238], 16);
+
+  var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
+  });
+
+  var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
+  }).addTo(petaMap);
+
+  // ===== 1. POLYGON BATAS WILAYAH KELAPA DUA =====
+  var batasWilayah = [
+    [1.4401274688269838, 125.22531130821366],
+    [1.4401271737836177, 125.22537996587123],
+    [1.4401499717188713, 125.22547386938182],
+    [1.4401037053206327, 125.22558789507323],
+    [1.4400111725213693, 125.22567978636573],
+    [1.4398214983355073, 125.22577492057563],
+    [1.4393337427435058, 125.22595833233161],
+    [1.4391655877203673, 125.22607702440231],
+    [1.4390496993628104, 125.22621641878493],
+    [1.4388143677650234, 125.22677328513812],
+    [1.4386991903572741, 125.226936149007],
+    [1.4385584179658226, 125.22707554339148],
+    [1.4382832718985756, 125.2272483639877],
+    [1.4377820367343075, 125.22761178506704],
+    [1.437526086819818,  125.22791475449905],
+    [1.4374940930790867, 125.22799156364864],
+    [1.4333985679714718, 125.23408196793253],
+    [1.4320761572349472, 125.23626462802653],
+    [1.430925090497728,  125.23886476007326],
+    [1.4321378859297815, 125.24090537113243],
+    [1.4271656898317377, 125.23902630413053],
+    [1.422182699127358,  125.23840201405463],
+    [1.4210481395013899, 125.23786441614313],
+    [1.4215229836188508, 125.23772962161512],
+    [1.4215217897958827, 125.2377301468396],
+    [1.4286328079883128, 125.22519819576972],
+    [1.4350711942687004, 125.21833534454677],
+    [1.435089285835796,  125.21835345917188],
+    [1.4352977621618308, 125.21851774446758],
+    [1.4356288931566885, 125.21868174611065],
+    [1.436163257597989,  125.21879577302916],
+    [1.4365223968972969, 125.21893857577149],
+    [1.4369838908134356, 125.21921430181814],
+    [1.4372209226754011, 125.21942536248066],
+    [1.437427427683263,  125.21965887639492],
+    [1.43792303962889,   125.22042857418982],
+    [1.438355906089734,  125.22133112615863],
+    [1.4385372712693976, 125.22183587546994],
+    [1.4385399648115034, 125.22200382585783],
+    [1.4383020352424571, 125.22304924969862],
+    [1.4383271749732287, 125.22323606085267],
+    [1.4384169597168115, 125.22342287197931],
+    [1.4385615131465797, 125.22359082236719],
+    [1.438906623493141,  125.22388435285647],
+    [1.439027965162836,  125.22403463279184],
+    [1.4390980255275214, 125.22414300774123],
+    [1.4391449731948225, 125.22442767262554],
+    [1.4391452794627986, 125.22463248231143],
+    [1.4391648675914406, 125.22479217593049],
+    [1.4392128585059052, 125.2249381535332],
+    [1.4392608494193648, 125.224985179875],
+    [1.439395909989186,  125.22505156041977],
+    [1.4399892028684176, 125.22521706893343],
+    [1.4400753575957583, 125.22525918056516],
+    [1.4401272462367933, 125.22531108559964],
+    [1.4401272462367933, 125.22538159809929]
+  ];
+
+  L.polygon(batasWilayah, {
+    color: '#E64A3B',
+    weight: 2,
+    dashArray: '4, 6',
+    fill: false
+  }).addTo(petaMap)
+    .bindPopup('<b>Kelurahan Kelapa Dua</b><br>Kecamatan Lembeh Selatan, Kota Bitung');
+
+petaMap.fitBounds(batasWilayah);
+petaMap.once('moveend', function () {
+  petaMap.setZoom(petaMap.getZoom() + 1);
+  petaMap.once('moveend', function () {
+    petaMap.panBy([-110, -60]); // geser tampilan ke atas-kiri
+  });
+});
+
+  // ===== 2. DEFINISI KATEGORI: warna + ikon glyph (SVG path) per jenis titik =====
+  var kategoriInfo = {
+    ibadah: {
+      label: "Tempat Ibadah",
+      warna: "#C9922E",
+      gradA: "#E4B25C", gradB: "#B87E1E",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M5 8h14" stroke="#7a5410" stroke-width="2.6" stroke-linecap="round"/></svg>'
+    },
+    sekolah: {
+      label: "Sekolah",
+      warna: "#2E6BB0",
+      gradA: "#5A93D6", gradB: "#1E4E80",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 4L2 9l10 5 10-5-10-5z" fill="#0f3a63"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" stroke="#0f3a63" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    },
+    kantor: {
+      label: "Kantor Kelurahan",
+      warna: "#123A66",
+      gradA: "#2A5D96", gradB: "#0A2440",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5H3l9-5z" fill="#fff"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8" stroke="#fff" stroke-width="1.6"/><path d="M3 20h18" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>'
+    },
+    dermaga: {
+      label: "Dermaga",
+      warna: "#2E8B57",
+      gradA: "#4CB57E", gradB: "#1E6B3E",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="2" stroke="#0e4a2c" stroke-width="1.6"/><path d="M12 7v13M6 12H2c0 4 4 7 10 8M18 12h4c0 4-4 7-10 8M5 14h4" stroke="#0e4a2c" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    },
+    wisata: {
+      label: "Resort & Wisata Selam",
+      warna: "#8E44AD",
+      gradA: "#B06FCB", gradB: "#6B2E85",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="2" stroke="#4a2159" stroke-width="1.5"/><circle cx="15" cy="6" r="1.3" stroke="#4a2159" stroke-width="1.3"/><path d="M4 18c3-5 13-5 16 0" stroke="#4a2159" stroke-width="1.7" stroke-linecap="round"/></svg>'
+    },
+    galangan: {
+      label: "Galangan Kapal",
+      warna: "#008B8B",
+      gradA: "#2FB4B4", gradB: "#00625F",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><path d="M4 14h16l-2 6H6l-2-6z" stroke="#00403f" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 14V4M12 4l4 3M12 7l-4 3" stroke="#00403f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    },
+    kesehatan: {
+      label: "Fasilitas Kesehatan",
+      warna: "#D6336C",
+      gradA: "#F06595", gradB: "#A61E4D",
+      iconSvg: '<svg viewBox="0 0 24 24" fill="none"><rect x="10" y="4" width="4" height="16" fill="#6b0f2f"/><rect x="4" y="10" width="16" height="4" fill="#6b0f2f"/></svg>'
+    }
+  };
+
+  function buatLuxPin(kat) {
+    var info = kategoriInfo[kat];
+    var gradId = "grad-" + kat;
+    var html = '' +
+      '<div class="lux-pin">' +
+        '<svg viewBox="0 0 34 44" xmlns="http://www.w3.org/2000/svg">' +
+          '<defs>' +
+            '<linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0%" stop-color="' + info.gradA + '"/>' +
+              '<stop offset="100%" stop-color="' + info.gradB + '"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<path d="M17 43C17 43 3 27.5 3 16.5C3 8 9.2 1 17 1C24.8 1 31 8 31 16.5C31 27.5 17 43 17 43Z" ' +
+                'fill="url(#' + gradId + ')" stroke="#fff" stroke-width="2"/>' +
+          '<circle cx="17" cy="16" r="10.5" fill="#fff" fill-opacity="0.92"/>' +
+        '</svg>' +
+        '<div class="pin-icon">' + info.iconSvg + '</div>' +
+      '</div>';
+    return L.divIcon({
+      className: '',
+      html: html,
+      iconSize: [26, 34],
+      iconAnchor: [13, 33],
+      popupAnchor: [0, -30]
+    });
+  }
+
+  // ===== 3. DATA TITIK LOKASI (tiap titik punya field "kategori" sesuai kategoriInfo) =====
+  var titikLokasi = [
+    { nama: "GPDI Parakletos Kelapa Dua",     lat: 1.437040120661988,  lng: 125.2228776362834,  kategori: "ibadah" },
+    { nama: "GMIM Bukit Sion Kelapa Dua",      lat: 1.4371513903310735, lng: 125.22516660044637, kategori: "ibadah" },
+    { nama: "Sidang KGPM Eksodus Kelapa Dua",  lat: 1.4368198020015863, lng: 125.22380499922369, kategori: "ibadah" },
+    { nama: "GMHAK Jemaat Kelapa Dua",         lat: 1.4378817166573181, lng: 125.22246216265081, kategori: "ibadah" },
+    { nama: "GKPMI Filadelfia Kelapa Dua",     lat: 1.4378376554973802, lng: 125.22270667257048, kategori: "ibadah" },
+    { nama: "SMA Negeri 3 Bitung",             lat: 1.4372354134738465, lng: 125.2220599704545,  kategori: "sekolah" },
+    { nama: "SMK Negeri 3 Bitung",             lat: 1.4371435933909602, lng: 125.22189722051921, kategori: "sekolah" },
+    { nama: "SD Inpres 5/81 Mawali",           lat: 1.4373449532183127, lng: 125.22152337906603, kategori: "sekolah" },
+    { nama: "Kantor Lurah Kelapa Dua",         lat: 1.4366512102383935, lng: 125.22472794508985, kategori: "kantor" },
+    { nama: "Dermaga Kelurahan Kelapa Dua",    lat: 1.4385847199481805, lng: 125.22253819879056, kategori: "dermaga" },
+    { nama: "K2 Lembeh Dive Resort",           lat: 1.4389605263935898, lng: 125.22531069606828, kategori: "wisata" },
+    { nama: "PT. Dok Kelapa Dua Permai",       lat: 1.4376871087342855, lng: 125.21969629042236, kategori: "galangan" },
+    { nama: "POLINDES Kelapa Dua",             lat: 1.4371095464717156, lng: 125.22540826539486, kategori: "kesehatan" }
+  ];
+
+  var kelompokMarker = L.layerGroup();
+
+  titikLokasi.forEach(function (t) {
+    L.marker([t.lat, t.lng], { icon: buatLuxPin(t.kategori) })
+      .bindPopup('<div class="popup-title">' + t.nama + '</div><div class="popup-desc">' + kategoriInfo[t.kategori].label + '</div>')
+      .addTo(kelompokMarker);
+  });
+
+  kelompokMarker.addTo(petaMap);
+
+  // ===== 4. Kontrol layer peta jalan / satelit / marker =====
+  L.control.layers(
+    { "Peta Jalan": streetLayer, "Satelit": satelliteLayer },
+    { "Titik Lokasi Penting": kelompokMarker }
+  ).addTo(petaMap);
+
+  // ===== 5. Bangun panel Keterangan versi dropdown, dikelompokkan per kategori =====
+  var legendContainer = document.getElementById('legendList');
+  Object.keys(kategoriInfo).forEach(function (kat) {
+    var info = kategoriInfo[kat];
+    var anggota = titikLokasi.filter(function (t) { return t.kategori === kat; });
+    if (anggota.length === 0) return;
+
+    var details = document.createElement('details');
+    details.className = 'legend-item';
+
+    var summary = document.createElement('summary');
+    summary.innerHTML =
+      '<span class="legend-swatch-label">' +
+        '<span class="legend-swatch" style="background:' + info.warna + '"></span>' +
+        '<span>' + info.label + '</span>' +
+      '</span>' +
+      '<span style="display:flex;align-items:center;">' +
+        '<span class="legend-count">' + anggota.length + '</span>' +
+        '<span class="legend-chevron"></span>' +
+      '</span>';
+    details.appendChild(summary);
+
+    var ul = document.createElement('ul');
+    ul.className = 'legend-list';
+    anggota.forEach(function (t) {
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="lbl-name">' + t.nama + '</span>';
+      ul.appendChild(li);
+    });
+    details.appendChild(ul);
+
+    legendContainer.appendChild(details);
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>
